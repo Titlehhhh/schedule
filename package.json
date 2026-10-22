@@ -1,0 +1,11 @@
+{
+  "name": "schedule",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Расписание занятий — статический сайт для GitHub Pages",
+  "scripts": {
+    "start": "node serve.js 8000",
+    "test": "node test/core.test.js",
+    "test:e2e": "node test/e2e.js"
+  }
+}

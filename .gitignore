@@ -1,0 +1,14 @@
+# служебное
+.work/
+node_modules/
+.DS_Store
+Thumbs.db
+
+tools/_*.png
+
+# временные файлы проверки вёрстки
+_diag.js
+_cap.html
+_capture.html
+_mob.html
+_t.html

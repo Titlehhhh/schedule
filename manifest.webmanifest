@@ -1,0 +1,20 @@
+{
+  "name": "Расписание занятий",
+  "short_name": "Расписание",
+  "description": "Что сегодня и завтра: расписание занятий с учётом 1-й и 2-й учебной недели.",
+  "lang": "ru",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f1f4f2",
+  "theme_color": "#0b7c5e",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
