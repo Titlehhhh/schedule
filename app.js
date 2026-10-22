@@ -625,18 +625,21 @@
 
   function renderSummary(sum) {
     var box = $('#tasksSummary');
-    if (!sum.total) {
-      box.innerHTML = 'Заданий пока нет. Их заносят в <b>data.js</b>.';
-    } else {
-      var parts = [];
-      parts.push(sum.total + ' ' + C.plural(sum.total, ['задание', 'задания', 'заданий']));
-      if (sum.open) parts.push('осталось ' + sum.open);
-      else parts.push('<span class="is-ok">всё сдано</span>');
-      if (sum.overdue) parts.push('<span class="is-danger">просрочено ' + sum.overdue + '</span>');
-      if (sum.next) parts.push('ближайший срок — <b>' + esc(C.fmtDeadline(sum.next.date)) + '</b>');
-      box.innerHTML = parts.join(' · ');
+    if (box) {
+      if (!sum.total) {
+        box.innerHTML = 'Заданий пока нет. Их заносят в <b>data.js</b>.';
+      } else {
+        var parts = [];
+        parts.push(sum.total + ' ' + C.plural(sum.total, ['задание', 'задания', 'заданий']));
+        if (sum.open) parts.push('осталось ' + sum.open);
+        else parts.push('<span class="is-ok">всё сдано</span>');
+        if (sum.overdue) parts.push('<span class="is-danger">просрочено ' + sum.overdue + '</span>');
+        if (sum.next) parts.push('ближайший срок — <b>' + esc(C.fmtDeadline(sum.next.date)) + '</b>');
+        box.innerHTML = parts.join(' · ');
+      }
     }
     var badge = $('#tasksBadge');
+    if (!badge) return;
     if (sum.open) { badge.textContent = String(sum.open); badge.hidden = false; }
     else badge.hidden = true;
   }
@@ -777,10 +780,8 @@
     if ($('#todayBody')) renderDayCards();
     if ($('#days')) renderWeek();
     if ($('#anchorInput')) renderAnchorUI();
-    if ($('#tasksList')) {
-      renderSummary(C.assignmentSummary(C.assignmentsList(), state.now, state.done));
-      renderTasks();
-    }
+    renderSummary(C.assignmentSummary(C.assignmentsList(), state.now, state.done));
+    if ($('#tasksList')) renderTasks();
   }
 
   /* -------------------------------- события -------------------------------- */
