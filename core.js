@@ -395,7 +395,7 @@
       'PRODID:-//schedule//ru//EN',
       'CALSCALE:GREGORIAN',
       'METHOD:PUBLISH',
-      'X-WR-CALNAME:' + icsEscape('Расписание ' + D.group),
+      'X-WR-CALNAME:' + icsEscape(D.group),
       'X-WR-TIMEZONE:' + TZ,
       'BEGIN:VTIMEZONE',
       'TZID:' + TZ,
