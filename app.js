@@ -544,8 +544,7 @@
     h += stateChip(item.state);
     h += '</p></div></div>';
     if (a.what) h += '<p class="task__what">' + esc(a.what) + '</p>';
-    var f = a.file ? C.fileById(a.file) : null;
-    if (f) {
+    C.filesForTask(a.id).forEach(function (f) {
       h += '<a class="attach" href="' + esc(f.file) + '" download>';
       h += '<span class="attach__badge attach__badge--' +
            esc(String(f.type || '').toLowerCase()) + '">' +
@@ -560,7 +559,7 @@
            '<path d="M8 1.5v8M4.5 6 8 9.5 11.5 6M2.5 12.5v1A1.5 1.5 0 0 0 4 15h8a1.5 1.5 0 0 0 1.5-1.5v-1" ' +
            'fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       h += '</span></a>';
-    }
+    });
     if (a.how && a.how.length) {
       h += '<details class="task__steps"><summary>Как делать · ' + a.how.length + ' ' +
            C.plural(a.how.length, ['шаг', 'шага', 'шагов']) + '</summary><ol class="steps">';
@@ -621,6 +620,23 @@
     if (isOpen) h += railHTML(g);   /* полоса сроков — только в раскрытой карточке */
     h += '</summary><div class="disc__body">';
     g.items.forEach(function (i) { h += taskHTML(i); });
+    var mats = C.filesForSubject(g.subject);
+    if (mats.length) {
+      h += '<div class="materials">';
+      h += '<p class="materials__title">Материалы</p>';
+      mats.forEach(function (f) {
+        h += '<a class="materials__item" href="' + esc(f.file) + '" download>';
+        h += '<span class="attach__badge attach__badge--' +
+             esc(String(f.type || '').toLowerCase()) + '">' +
+             esc(String(f.type || '').toUpperCase()) + '</span>';
+        h += '<span class="materials__body">';
+        h += '<span class="materials__name">' + esc(f.title || '') + '</span>';
+        h += '<span class="materials__meta">' + esc(C.fmtSize(f.size)) + ' · ' +
+             esc(String(f.file || '').split('/').pop()) + '</span>';
+        h += '</span></a>';
+      });
+      h += '</div>';
+    }
     h += '</div></details>';
     return h;
   }
@@ -712,6 +728,15 @@
     var all = C.assignmentsList();
     var list = visibleAssignments();
     var groups = C.groupAssignments(list, state.now, state.done);
+
+    /* дисциплины без заданий, но с материалами — тоже показываем */
+    var known = {};
+    groups.forEach(function (g) { known[g.subject] = true; });
+    C.filesList().forEach(function (f) {
+      if (f.task || !f.subject || known[f.subject]) return;
+      known[f.subject] = true;
+      groups.push({ subject: f.subject, items: [], open: 0, done: 0, next: null, materialsOnly: true });
+    });
 
     renderSummary(C.assignmentSummary(all, state.now, state.done));
 

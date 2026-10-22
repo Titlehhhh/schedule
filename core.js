@@ -359,6 +359,16 @@
     return null;
   }
 
+  /* Файлы, прикреплённые к заданию */
+  function filesForTask(taskId) {
+    return filesList().filter(function (f) { return f.task === taskId; });
+  }
+
+  /* Материалы дисциплины: файлы без привязки к заданию */
+  function filesForSubject(subject) {
+    return filesList().filter(function (f) { return !f.task && f.subject === subject; });
+  }
+
   /* 20354 → «20 КБ» */
   function fmtSize(bytes) {
     var b = Number(bytes) || 0;
@@ -534,6 +544,7 @@
     fmtDeadline: fmtDeadline, relativeDeadline: relativeDeadline,
     groupAssignments: groupAssignments, assignmentSummary: assignmentSummary,
     nextLessonForSubject: nextLessonForSubject, buildTasksICS: buildTasksICS,
-    filesList: filesList, fileById: fileById, fmtSize: fmtSize
+    filesList: filesList, fileById: fileById, fmtSize: fmtSize,
+    filesForTask: filesForTask, filesForSubject: filesForSubject
   };
 })(typeof window !== 'undefined' ? window : globalThis);

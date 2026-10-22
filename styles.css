@@ -836,6 +836,54 @@ a { color: var(--accent-ink); }
 .attach__dl { flex: none; color: var(--text-3); }
 .attach:hover .attach__dl { color: var(--accent-ink); }
 
+/* материалы дисциплины: учебник, методичка */
+.materials {
+  margin-top: 12px;
+  padding: 12px 14px 14px;
+  background: var(--surface);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-md);
+}
+
+.materials__title {
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 8px;
+}
+
+.materials__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  text-decoration: none;
+  color: inherit;
+}
+.materials__item + .materials__item { border-top: 1px solid var(--line); }
+
+.materials__body { flex: 1 1 auto; min-width: 0; }
+
+.materials__name {
+  display: block;
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.materials__meta {
+  display: block;
+  margin-top: 1px;
+  font-size: .75rem;
+  color: var(--text-3);
+  overflow-wrap: anywhere;
+}
+
+.materials__item:hover .materials__name { color: var(--accent-ink); }
+
 /* ============================== ТЁМНАЯ ТЕМА ============================== */
 
 @media (prefers-color-scheme: dark) {
