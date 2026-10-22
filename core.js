@@ -350,6 +350,15 @@
     return Array.isArray(D.files) ? D.files : [];
   }
 
+  /* Файл по id — чтобы задание могло прикрепить лабораторную работу */
+  function fileById(id) {
+    var list = filesList();
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id === id) return list[i];
+    }
+    return null;
+  }
+
   /* 20354 → «20 КБ» */
   function fmtSize(bytes) {
     var b = Number(bytes) || 0;
@@ -525,6 +534,6 @@
     fmtDeadline: fmtDeadline, relativeDeadline: relativeDeadline,
     groupAssignments: groupAssignments, assignmentSummary: assignmentSummary,
     nextLessonForSubject: nextLessonForSubject, buildTasksICS: buildTasksICS,
-    filesList: filesList, fmtSize: fmtSize
+    filesList: filesList, fileById: fileById, fmtSize: fmtSize
   };
 })(typeof window !== 'undefined' ? window : globalThis);

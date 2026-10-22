@@ -17,7 +17,7 @@
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var esc = C.esc;
-  function on(sel, ev, fn) { var el = $(sel); if (el) el.addEventListener(ev, fn); }
+  function on(sel, ev, fn, capture) { var el = $(sel); if (el) el.addEventListener(ev, fn, !!capture); }
 
   var MIN_WEEK = -52;   // насколько далеко можно листать назад
 
@@ -544,6 +544,23 @@
     h += stateChip(item.state);
     h += '</p></div></div>';
     if (a.what) h += '<p class="task__what">' + esc(a.what) + '</p>';
+    var f = a.file ? C.fileById(a.file) : null;
+    if (f) {
+      h += '<a class="attach" href="' + esc(f.file) + '" download>';
+      h += '<span class="attach__badge attach__badge--' +
+           esc(String(f.type || '').toLowerCase()) + '">' +
+           esc(String(f.type || '').toUpperCase()) + '</span>';
+      h += '<span class="attach__body">';
+      h += '<span class="attach__name">' + esc(f.title || '') + '</span>';
+      h += '<span class="attach__meta">' + esc(C.fmtSize(f.size)) + ' · ' +
+           esc(String(f.file || '').split('/').pop()) + '</span>';
+      h += '</span>';
+      h += '<span class="attach__dl" aria-hidden="true">';
+      h += '<svg viewBox="0 0 16 16" width="16" height="16" focusable="false">' +
+           '<path d="M8 1.5v8M4.5 6 8 9.5 11.5 6M2.5 12.5v1A1.5 1.5 0 0 0 4 15h8a1.5 1.5 0 0 0 1.5-1.5v-1" ' +
+           'fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      h += '</span></a>';
+    }
     if (a.how && a.how.length) {
       h += '<details class="task__steps"><summary>Как делать · ' + a.how.length + ' ' +
            C.plural(a.how.length, ['шаг', 'шага', 'шагов']) + '</summary><ol class="steps">';
@@ -714,40 +731,6 @@
 
     renderUrgent();
     renderSubjectSelect();
-    renderFiles();
-  }
-
-  /* Файлы с заданиями: обычные статические файлы, отдаются по своей ссылке */
-  function renderFiles() {
-    var box = $('#filesList');
-    if (!box) return;
-    var section = $('#filesSection');
-    var files = C.filesList();
-    if (!files.length) {
-      if (section) section.hidden = true;
-      box.innerHTML = '';
-      return;
-    }
-    if (section) section.hidden = false;
-    var h = '';
-    files.forEach(function (f) {
-      var type = String(f.type || '').toLowerCase();
-      var name = String(f.file || '').split('/').pop();
-      h += '<a class="file" href="' + esc(f.file) + '" download>';
-      h += '<span class="file__badge file__badge--' + esc(type) + '">' + esc(type.toUpperCase() || 'файл') + '</span>';
-      h += '<span class="file__body">';
-      h += '<span class="file__title">' + esc(f.title || name) + '</span>';
-      h += '<span class="file__meta">';
-      if (f.subject) h += esc(f.subject) + ' · ';
-      h += esc(C.fmtSize(f.size)) + ' · ' + esc(name);
-      h += '</span></span>';
-      h += '<span class="file__dl" aria-hidden="true">';
-      h += '<svg viewBox="0 0 16 16" width="16" height="16" focusable="false">' +
-           '<path d="M8 1.5v8M4.5 6 8 9.5 11.5 6M2.5 12.5v1A1.5 1.5 0 0 0 4 15h8a1.5 1.5 0 0 0 1.5-1.5v-1" ' +
-           'fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-      h += '</span></a>';
-    });
-    box.innerHTML = h;
   }
 
   /* Пересчёт счётчиков без перерисовки списка — чтобы страница не прыгала
@@ -816,7 +799,6 @@
     if ($('#anchorInput')) renderAnchorUI();
     renderSummary(C.assignmentSummary(C.assignmentsList(), state.now, state.done));
     if ($('#tasksList')) renderTasks();
-    else if ($('#filesList')) renderFiles();
   }
 
   /* -------------------------------- события -------------------------------- */
@@ -835,18 +817,18 @@
       });
     });
 
-    on('$1', 'input', function () {
+    on('#tasksSearch', 'input', function () {
       state.taskQuery = this.value;
       renderTasks();
     });
 
-    on('$1', 'change', function () {
+    on('#tasksSubject', 'change', function () {
       state.taskSubject = this.value;
       renderTasks();
     });
 
     /* --- отметки «сделано» --- */
-    on('$1', 'change', function (e) {
+    on('#tasksList', 'change', function (e) {
       var box = e.target;
       if (!box || box.type !== 'checkbox') return;
       var id = box.getAttribute('data-task-id');
@@ -859,14 +841,14 @@
     });
 
     /* какие дисциплины раскрыты — запоминаем, чтобы фильтр не сбрасывал вид */
-    on('$1', 'toggle', function (e) {
+    on('#tasksList', 'toggle', function (e) {
       var d = e.target;
       if (!d || !d.className || d.className.indexOf('disc') !== 0) return;
       state.openSubjects[d.getAttribute('data-subject')] = d.open;
     }, true);
 
     /* --- «что горит»: переход к дисциплине --- */
-    on('$1', 'click', function (e) {
+    on('#urgentList', 'click', function (e) {
       var btn = e.target && e.target.closest ? e.target.closest('.urgent__btn') : null;
       if (!btn) return;
       var subject = btn.getAttribute('data-goto');
@@ -882,29 +864,29 @@
       if (sum) sum.focus({ preventScroll: true });
     });
 
-    on('$1', 'click', downloadTasksICS);
+    on('#tasksIcsBtn', 'click', downloadTasksICS);
 
-    on('$1', 'click', function () {
+    on('#weekPrev', 'click', function () {
       state.cursor = Math.max(MIN_WEEK, state.cursor - 1);
       renderWeek();
     });
 
-    on('$1', 'click', function () {
+    on('#weekNext', 'click', function () {
       if (state.cursor >= C.lastWeekNo()) return;
       state.cursor += 1;
       renderWeek();
     });
 
-    on('$1', 'click', function (e) {
+    on('#weekHint', 'click', function (e) {
       if (e.target && e.target.id === 'weekToday') {
         state.cursor = C.academicWeekNo(state.now);
         renderWeek();
       }
     });
 
-    on('$1', 'click', downloadICS);
+    on('#icsBtn', 'click', downloadICS);
 
-    on('$1', 'change', function () {
+    on('#anchorInput', 'change', function () {
       var v = this.value;
       var p = C.loadPrefs();
       if (/^\d{4}-\d{2}-\d{2}$/.test(v)) { p.anchor = v; C.savePrefs(p); }
@@ -914,7 +896,7 @@
       renderAll();
     });
 
-    on('$1', 'change', function () {
+    on('#swapInput', 'change', function () {
       var p = C.loadPrefs();
       p.swap = this.checked;
       C.savePrefs(p);
@@ -923,7 +905,7 @@
       renderAll();
     });
 
-    on('$1', 'click', function () {
+    on('#classesNov', 'click', function () {
       var p = C.loadPrefs();
       p.classes = '2026-11-02';
       C.savePrefs(p);
@@ -932,7 +914,7 @@
       renderAll();
     });
 
-    on('$1', 'click', function () {
+    on('#anchorReset', 'click', function () {
       var p = C.loadPrefs();
       delete p.anchor;
       delete p.swap;
