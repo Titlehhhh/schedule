@@ -13,9 +13,11 @@
     return;
   }
   var D = C.D;
+  var PAGE = document.body.getAttribute('data-page') || 'schedule';
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var esc = C.esc;
+  function on(sel, ev, fn) { var el = $(sel); if (el) el.addEventListener(ev, fn); }
 
   var MIN_WEEK = -52;   // насколько далеко можно листать назад
 
@@ -426,11 +428,13 @@
     var now = state.now;
     var parity = C.weekParity(now);
     $('#brandDept').textContent = D.form;
-    $('#brandTitle').textContent = D.group;
+    $('#brandTitle').textContent = PAGE === 'tasks' ? 'Задания' : D.group;
     $('#weekPillNum').textContent = parity + '-я неделя';
     $('#weekPill').title = 'Сейчас идёт ' + parity + '-я учебная неделя';
     $('#topbarDate').textContent = C.fmtDate(now);
-    $('#statusClock').textContent = C.pad(now.getHours()) + ':' + C.pad(now.getMinutes());
+    if ($('#statusClock')) {
+      $('#statusClock').textContent = C.pad(now.getHours()) + ':' + C.pad(now.getMinutes());
+    }
   }
 
   function renderAnchorUI() {
@@ -769,12 +773,14 @@
   function renderAll() {
     ensureCursor();
     renderTopbar();
-    renderStatus();
-    renderDayCards();
-    renderWeek();
-    renderAnchorUI();
-    renderSummary(C.assignmentSummary(C.assignmentsList(), state.now, state.done));
-    renderTasks();
+    if ($('#status')) renderStatus();
+    if ($('#todayBody')) renderDayCards();
+    if ($('#days')) renderWeek();
+    if ($('#anchorInput')) renderAnchorUI();
+    if ($('#tasksList')) {
+      renderSummary(C.assignmentSummary(C.assignmentsList(), state.now, state.done));
+      renderTasks();
+    }
   }
 
   /* -------------------------------- события -------------------------------- */
@@ -793,18 +799,18 @@
       });
     });
 
-    $('#tasksSearch').addEventListener('input', function () {
+    on('$1', 'input', function () {
       state.taskQuery = this.value;
       renderTasks();
     });
 
-    $('#tasksSubject').addEventListener('change', function () {
+    on('$1', 'change', function () {
       state.taskSubject = this.value;
       renderTasks();
     });
 
     /* --- отметки «сделано» --- */
-    $('#tasksList').addEventListener('change', function (e) {
+    on('$1', 'change', function (e) {
       var box = e.target;
       if (!box || box.type !== 'checkbox') return;
       var id = box.getAttribute('data-task-id');
@@ -817,14 +823,14 @@
     });
 
     /* какие дисциплины раскрыты — запоминаем, чтобы фильтр не сбрасывал вид */
-    $('#tasksList').addEventListener('toggle', function (e) {
+    on('$1', 'toggle', function (e) {
       var d = e.target;
       if (!d || !d.className || d.className.indexOf('disc') !== 0) return;
       state.openSubjects[d.getAttribute('data-subject')] = d.open;
     }, true);
 
     /* --- «что горит»: переход к дисциплине --- */
-    $('#urgentList').addEventListener('click', function (e) {
+    on('$1', 'click', function (e) {
       var btn = e.target && e.target.closest ? e.target.closest('.urgent__btn') : null;
       if (!btn) return;
       var subject = btn.getAttribute('data-goto');
@@ -840,29 +846,29 @@
       if (sum) sum.focus({ preventScroll: true });
     });
 
-    $('#tasksIcsBtn').addEventListener('click', downloadTasksICS);
+    on('$1', 'click', downloadTasksICS);
 
-    $('#weekPrev').addEventListener('click', function () {
+    on('$1', 'click', function () {
       state.cursor = Math.max(MIN_WEEK, state.cursor - 1);
       renderWeek();
     });
 
-    $('#weekNext').addEventListener('click', function () {
+    on('$1', 'click', function () {
       if (state.cursor >= C.lastWeekNo()) return;
       state.cursor += 1;
       renderWeek();
     });
 
-    $('#weekHint').addEventListener('click', function (e) {
+    on('$1', 'click', function (e) {
       if (e.target && e.target.id === 'weekToday') {
         state.cursor = C.academicWeekNo(state.now);
         renderWeek();
       }
     });
 
-    $('#icsBtn').addEventListener('click', downloadICS);
+    on('$1', 'click', downloadICS);
 
-    $('#anchorInput').addEventListener('change', function () {
+    on('$1', 'change', function () {
       var v = this.value;
       var p = C.loadPrefs();
       if (/^\d{4}-\d{2}-\d{2}$/.test(v)) { p.anchor = v; C.savePrefs(p); }
@@ -872,7 +878,7 @@
       renderAll();
     });
 
-    $('#swapInput').addEventListener('change', function () {
+    on('$1', 'change', function () {
       var p = C.loadPrefs();
       p.swap = this.checked;
       C.savePrefs(p);
@@ -881,7 +887,7 @@
       renderAll();
     });
 
-    $('#classesNov').addEventListener('click', function () {
+    on('$1', 'click', function () {
       var p = C.loadPrefs();
       p.classes = '2026-11-02';
       C.savePrefs(p);
@@ -890,7 +896,7 @@
       renderAll();
     });
 
-    $('#anchorReset').addEventListener('click', function () {
+    on('$1', 'click', function () {
       var p = C.loadPrefs();
       delete p.anchor;
       delete p.swap;
@@ -918,7 +924,7 @@
         renderAll();
         return;
       }
-      renderStatus();
+      if ($('#status')) renderStatus();
       renderTopbar();
     }, 20000);
   }

@@ -9,10 +9,11 @@
    Все пути относительные — сайт живёт в подкаталоге '/schedule/'.
    ========================================================================== */
 
-var CACHE = 'schedule-v2';
+var CACHE = 'schedule-v3';
 var ASSETS = [
   './',
   './index.html',
+  './tasks.html',
   './styles.css',
   './data.js',
   './core.js',

@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-page="schedule">
 <a class="skip-link" href="#main">Перейти к содержимому</a>
 
 <header class="topbar">
@@ -39,15 +39,15 @@
     </div>
   </div>
 
-  <nav class="tabs" aria-label="Разделы страницы">
-    <a class="tabs__tab" href="#schedule">
+  <nav class="tabs" aria-label="Разделы сайта">
+    <a class="tabs__tab is-on" href="index.html" aria-current="page">
       <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
         <rect x="2" y="3.5" width="12" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
         <path d="M2 7h12M5.5 2v3M10.5 2v3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
       </svg>
       Расписание
     </a>
-    <a class="tabs__tab" href="#tasks">
+    <a class="tabs__tab" href="tasks.html">
       <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
         <path d="M2.5 4.5h9M2.5 8h9M2.5 11.5h6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         <path d="M12.5 10.5l1.6 1.6 2.4-3" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -170,61 +170,6 @@
           <button type="button" class="linkbtn linkbtn--danger" id="anchorReset">Сбросить к настройкам по умолчанию</button>
         </div>
       </details>
-    </section>
-  </section>
-
-  <!-- ========================= ЗАДАНИЯ ========================= -->
-  <section class="panel" id="tasks" aria-label="Задания по дисциплинам">
-
-    <section class="tasks" aria-labelledby="tasksTitle">
-      <header class="tasks__head">
-        <div class="tasks__headline">
-          <h2 class="tasks__title" id="tasksTitle">Задания по дисциплинам</h2>
-          <p class="tasks__summary" id="tasksSummary"></p>
-        </div>
-        <div class="tasks__actions">
-          <button type="button" class="linkbtn" id="tasksIcsBtn" title="Скачать сроки сдачи в календарь">
-            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
-              <path d="M8 1v8M4.5 5.5 8 9l3.5-3.5M2 11.5v1.5A2 2 0 0 0 4 15h8a2 2 0 0 0 2-2v-1.5"
-                    fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            Сроки в календарь
-          </button>
-        </div>
-      </header>
-
-      <div class="tasks__layout">
-        <div class="tasks__main">
-          <div class="tasks__filters">
-            <div class="segmented" role="group" aria-label="Отбор заданий">
-              <button type="button" class="segmented__btn is-on" data-taskfilter="all" aria-pressed="true">Все</button>
-              <button type="button" class="segmented__btn" data-taskfilter="open" aria-pressed="false">Осталось</button>
-              <button type="button" class="segmented__btn" data-taskfilter="done" aria-pressed="false">Сдано</button>
-            </div>
-
-            <label class="search">
-              <svg class="search__icon" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
-                <circle cx="7" cy="7" r="4.4" fill="none" stroke="currentColor" stroke-width="1.5"/>
-                <path d="M10.4 10.4 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
-              <span class="sr-only">Поиск по заданиям</span>
-              <input type="search" id="tasksSearch" class="search__input" placeholder="Поиск по заданиям" autocomplete="off">
-            </label>
-
-            <label class="select">
-              <span class="sr-only">Дисциплина</span>
-              <select id="tasksSubject" class="select__input"></select>
-            </label>
-          </div>
-
-          <div id="tasksList" class="tasks__list"></div>
-        </div>
-
-        <aside class="urgent" aria-labelledby="urgentTitle">
-          <h2 class="urgent__title" id="urgentTitle">Что горит</h2>
-          <div id="urgentList" class="urgent__list"></div>
-        </aside>
-      </div>
     </section>
   </section>
 
