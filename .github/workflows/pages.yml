@@ -31,6 +31,7 @@ jobs:
         run: |
           mkdir -p _site
           cp index.html tasks.html styles.css data.js core.js app.js sw.js favicon.svg manifest.webmanifest _site/
+          cp -r files _site/
           cp .nojekyll _site/
 
       - name: Upload artifact

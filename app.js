@@ -714,6 +714,40 @@
 
     renderUrgent();
     renderSubjectSelect();
+    renderFiles();
+  }
+
+  /* Файлы с заданиями: обычные статические файлы, отдаются по своей ссылке */
+  function renderFiles() {
+    var box = $('#filesList');
+    if (!box) return;
+    var section = $('#filesSection');
+    var files = C.filesList();
+    if (!files.length) {
+      if (section) section.hidden = true;
+      box.innerHTML = '';
+      return;
+    }
+    if (section) section.hidden = false;
+    var h = '';
+    files.forEach(function (f) {
+      var type = String(f.type || '').toLowerCase();
+      var name = String(f.file || '').split('/').pop();
+      h += '<a class="file" href="' + esc(f.file) + '" download>';
+      h += '<span class="file__badge file__badge--' + esc(type) + '">' + esc(type.toUpperCase() || 'файл') + '</span>';
+      h += '<span class="file__body">';
+      h += '<span class="file__title">' + esc(f.title || name) + '</span>';
+      h += '<span class="file__meta">';
+      if (f.subject) h += esc(f.subject) + ' · ';
+      h += esc(C.fmtSize(f.size)) + ' · ' + esc(name);
+      h += '</span></span>';
+      h += '<span class="file__dl" aria-hidden="true">';
+      h += '<svg viewBox="0 0 16 16" width="16" height="16" focusable="false">' +
+           '<path d="M8 1.5v8M4.5 6 8 9.5 11.5 6M2.5 12.5v1A1.5 1.5 0 0 0 4 15h8a1.5 1.5 0 0 0 1.5-1.5v-1" ' +
+           'fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      h += '</span></a>';
+    });
+    box.innerHTML = h;
   }
 
   /* Пересчёт счётчиков без перерисовки списка — чтобы страница не прыгала
@@ -782,6 +816,7 @@
     if ($('#anchorInput')) renderAnchorUI();
     renderSummary(C.assignmentSummary(C.assignmentsList(), state.now, state.done));
     if ($('#tasksList')) renderTasks();
+    else if ($('#filesList')) renderFiles();
   }
 
   /* -------------------------------- события -------------------------------- */

@@ -345,8 +345,20 @@
     return null;
   }
 
-  /* ------------------------------- экспорт -------------------------------- */
+  /* Файлы с заданиями: отдаются как обычные статические файлы */
+  function filesList() {
+    return Array.isArray(D.files) ? D.files : [];
+  }
 
+  /* 20354 → «20 КБ» */
+  function fmtSize(bytes) {
+    var b = Number(bytes) || 0;
+    if (b < 1024) return b + ' Б';
+    if (b < 1024 * 1024) return Math.round(b / 1024) + ' КБ';
+    return (b / 1024 / 1024).toFixed(1) + ' МБ';
+  }
+
+  /* ------------------------------- экспорт -------------------------------- */
   function icsEscape(s) {
     return String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
   }
@@ -512,6 +524,7 @@
     daysUntil: daysUntil, assignmentState: assignmentState, fmtDueShort: fmtDueShort,
     fmtDeadline: fmtDeadline, relativeDeadline: relativeDeadline,
     groupAssignments: groupAssignments, assignmentSummary: assignmentSummary,
-    nextLessonForSubject: nextLessonForSubject, buildTasksICS: buildTasksICS
+    nextLessonForSubject: nextLessonForSubject, buildTasksICS: buildTasksICS,
+    filesList: filesList, fmtSize: fmtSize
   };
 })(typeof window !== 'undefined' ? window : globalThis);
