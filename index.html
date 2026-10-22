@@ -39,17 +39,15 @@
     </div>
   </div>
 
-  <div class="tabs" role="tablist" aria-label="Разделы">
-    <button type="button" class="tabs__tab is-on" id="tab-schedule" role="tab"
-            aria-selected="true" aria-controls="panel-schedule">
+  <nav class="tabs" aria-label="Разделы страницы">
+    <a class="tabs__tab" href="#schedule">
       <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
         <rect x="2" y="3.5" width="12" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
         <path d="M2 7h12M5.5 2v3M10.5 2v3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
       </svg>
       Расписание
-    </button>
-    <button type="button" class="tabs__tab" id="tab-tasks" role="tab"
-            aria-selected="false" aria-controls="panel-tasks" tabindex="-1">
+    </a>
+    <a class="tabs__tab" href="#tasks">
       <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
         <path d="M2.5 4.5h9M2.5 8h9M2.5 11.5h6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         <path d="M12.5 10.5l1.6 1.6 2.4-3" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -57,8 +55,8 @@
       </svg>
       Задания
       <span class="tabs__badge" id="tasksBadge" hidden></span>
-    </button>
-  </div>
+    </a>
+  </nav>
 
   <div class="nowbar" id="nowbar" hidden>
     <div class="nowbar__inner">
@@ -72,7 +70,7 @@
 <main id="main" class="page">
 
   <!-- ======================= РАСПИСАНИЕ ======================= -->
-  <div class="panel" id="panel-schedule" role="tabpanel" aria-labelledby="tab-schedule">
+  <section class="panel" id="schedule" aria-label="Расписание занятий">
 
     <!-- ======================= СЕЙЧАС ======================= -->
     <section class="status" id="status">
@@ -173,10 +171,10 @@
         </div>
       </details>
     </section>
-  </div>
+  </section>
 
   <!-- ========================= ЗАДАНИЯ ========================= -->
-  <div class="panel" id="panel-tasks" role="tabpanel" aria-labelledby="tab-tasks" hidden>
+  <section class="panel" id="tasks" aria-label="Задания по дисциплинам">
 
     <section class="tasks" aria-labelledby="tasksTitle">
       <header class="tasks__head">
@@ -228,7 +226,7 @@
         </aside>
       </div>
     </section>
-  </div>
+  </section>
 
 </main>
 

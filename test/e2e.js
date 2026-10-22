@@ -41,7 +41,7 @@ const SCENARIOS = [
   { id: 'free', now: '2026-10-23T10:00', expect: 'Сегодня пар не было' },
   { id: 'weekend', now: '2026-10-25T12:00', expect: 'Сегодня выходной' },
   { id: 'tue', now: '2026-10-20T15:30', expect: 'Идёт сейчас', also: 'Математические методы теории систем' },
-  { id: 'tasks', now: '2026-10-22T12:00', view: 'tasks', expect: 'Задания по дисциплинам',
+  { id: 'tasks', now: '2026-10-22T12:00', expect: 'Задания по дисциплинам',
     also: 'Введение в большие данные' }
 ];
 
@@ -212,13 +212,15 @@ server.listen(PORT, '127.0.0.1', () => {
     check('текущая пара помечена', /идёт сейчас|скоро/.test(h));
     check('пустые ячейки пояснены', /Пар нет/.test(h) && /неделю здесь/.test(h));
     check('нет подвала с устаревшим текстом', !/class="footer"/.test(h));
-    check('есть вкладка «Задания»', /id="tab-tasks"/.test(h) && /role="tablist"/.test(h));
+    check('есть навигация по якорям', /href="#tasks"/.test(h) && /href="#schedule"/.test(h));
 
     /* --- раздел с заданиями --- */
     const th = reports['tasks'] ? (reports['tasks'].html || '') : '';
     if (th) {
-      check('[tasks] панель заданий открыта', /id="panel-tasks"[^>]*>/.test(th) && !/id="panel-tasks"[^>]*hidden/.test(th));
-      check('[tasks] панель расписания скрыта', /id="panel-schedule"[^>]*hidden/.test(th));
+      check('[tasks] раздел расписания на месте', /id="schedule"/.test(th));
+      check('[tasks] раздел заданий на той же странице', /id="tasks"/.test(th));
+      check('навигация якорями', /href="#schedule"/.test(th) && /href="#tasks"/.test(th));
+      check('нет скрытых панелей-вкладок', !/panel-schedule|panel-tasks/.test(th));
       check('[tasks] есть дисциплины', /class="disc"/.test(th));
       check('[tasks] есть отметки выполнения', /type="checkbox"/.test(th));
       check('[tasks] есть сроки', /Срок:/.test(th));

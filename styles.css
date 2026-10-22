@@ -877,6 +877,7 @@ a { color: var(--accent-ink); }
 .tabs__tab {
   position: relative;
   display: inline-flex;
+  text-decoration: none;
   align-items: center;
   gap: 7px;
   min-height: 44px;
@@ -890,6 +891,7 @@ a { color: var(--accent-ink); }
   transition: color .15s ease;
 }
 .tabs__tab:hover { color: var(--text-2); }
+.tabs__tab:hover { text-decoration: none; }
 .tabs__tab.is-on { color: var(--accent-ink); }
 .tabs__tab.is-on::after {
   content: "";

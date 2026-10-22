@@ -24,7 +24,6 @@
     now: new Date(),
     statusKey: null,// что показывает блок «Сейчас» (для live-региона)
     fixedNow: false,// ?now=… — посмотреть состояние на конкретный момент
-    tab: 'schedule',// schedule | tasks
     done: {},       // id задания → true (лежит в localStorage)
     openSubjects: {},// какие дисциплины раскрыты
     taskFilter: 'all',   // all | open | done
@@ -753,35 +752,6 @@
     else if (html) metas.insertAdjacentHTML('beforeend', html);
   }
 
-  /* ------------------------------- вкладки -------------------------------- */
-
-  function setTab(view, opts) {
-    opts = opts || {};
-    state.tab = view;
-    var isTasks = view === 'tasks';
-    $('#panel-schedule').hidden = isTasks;
-    $('#panel-tasks').hidden = !isTasks;
-    $('#tab-schedule').classList.toggle('is-on', !isTasks);
-    $('#tab-tasks').classList.toggle('is-on', isTasks);
-    $('#tab-schedule').setAttribute('aria-selected', String(!isTasks));
-    $('#tab-tasks').setAttribute('aria-selected', String(isTasks));
-    $('#tab-schedule').tabIndex = isTasks ? -1 : 0;
-    $('#tab-tasks').tabIndex = isTasks ? 0 : -1;
-    if (isTasks) {
-      $('#nowbar').hidden = true;
-      renderTasks();
-    } else {
-      renderStatus();
-    }
-    if (!opts.skipUrl) {
-      try {
-        var params = new URLSearchParams(window.location.search);
-        if (isTasks) params.set('view', 'tasks'); else params.delete('view');
-        window.history.replaceState(null, '', '?' + params.toString());
-      } catch (e) { /* file:// */ }
-    }
-  }
-
   function downloadTasksICS() {
     var blob = new Blob([C.buildTasksICS(C.assignmentsList())], { type: 'text/calendar;charset=utf-8' });
     var url = URL.createObjectURL(blob);
@@ -804,31 +774,12 @@
     renderWeek();
     renderAnchorUI();
     renderSummary(C.assignmentSummary(C.assignmentsList(), state.now, state.done));
-    if (state.tab === 'tasks') renderTasks();
+    renderTasks();
   }
 
   /* -------------------------------- события -------------------------------- */
 
   function bind() {
-    /* --- вкладки --- */
-    $('#tab-schedule').addEventListener('click', function () { setTab('schedule'); });
-    $('#tab-tasks').addEventListener('click', function () { setTab('tasks'); });
-
-    var tabs = [$('#tab-schedule'), $('#tab-tasks')];
-    tabs.forEach(function (tab, i) {
-      tab.addEventListener('keydown', function (e) {
-        var next = null;
-        if (e.key === 'ArrowRight') next = tabs[(i + 1) % tabs.length];
-        else if (e.key === 'ArrowLeft') next = tabs[(i + tabs.length - 1) % tabs.length];
-        else if (e.key === 'Home') next = tabs[0];
-        else if (e.key === 'End') next = tabs[tabs.length - 1];
-        if (!next) return;
-        e.preventDefault();
-        next.focus();
-        setTab(next.id === 'tab-tasks' ? 'tasks' : 'schedule');
-      });
-    });
-
     /* --- фильтры и поиск --- */
     $$('.segmented__btn').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -981,11 +932,6 @@
 
   renderAll();
   bind();
-
-  /* ?view=tasks — сразу открыть раздел с заданиями */
-  if (/[?&]view=tasks/.test(window.location.search)) {
-    setTab('tasks', { skipUrl: true });
-  }
 
   /* офлайн-режим: кэшируем сайт, чтобы расписание открывалось без сети */
   if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
