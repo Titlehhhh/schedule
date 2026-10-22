@@ -618,7 +618,7 @@
     h += '<svg class="disc__chevron" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">' +
          '<path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     h += '</span></span>';
-    h += railHTML(g);
+    if (isOpen) h += railHTML(g);   /* полоса сроков — только в раскрытой карточке */
     h += '</summary><div class="disc__body">';
     g.items.forEach(function (i) { h += taskHTML(i); });
     h += '</div></details>';
